@@ -6,8 +6,6 @@
         <main class="centered">
             <h1><%= product.title %></h1>
             <img width="200px" src="<%=product.imageUrl%>" alt="" srcset="">
-        <form action="/cart" method="post">
-            <button class="btn" type="submit">Add to Cart</button>
-        </form>
+            <%- include('../includes/add-to-cart.ejs') %>
         </main>
         <%- include('../includes/end.ejs') %>
