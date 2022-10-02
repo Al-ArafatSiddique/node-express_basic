@@ -49,11 +49,8 @@ class User {
     })
 
     return db.collection('products')
-
     .find({_id: {$in: productIds}})
-    
     .toArray()
-
     .then((products)=>{
       return products.map(p=>{
         return {
@@ -70,7 +67,18 @@ class User {
     })
   }
 
-
+  deleteItemsFromCart(productId){
+    const updatedCart = this.cart.items.filter(p=>{
+      return p.productId.toString() !== productId.toString();
+    })
+    const db = getDb();
+    return db
+      .collection('users')
+      .updateOne(
+        {_id: new mongodb.ObjectId(this._id)},
+        {$set: {cart:{items: updatedCart}}}
+        )
+  }
    
 
 
