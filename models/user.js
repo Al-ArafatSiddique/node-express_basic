@@ -81,6 +81,11 @@ class User {
   }
    
 
+  addOrder(){
+    const db = getDb();
+    return db.collection('orders')
+    .insertOne(this.cart);
+  }
 
   static findById(userId) {
     const db = getDb();

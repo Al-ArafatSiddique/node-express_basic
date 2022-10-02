@@ -64,11 +64,12 @@ exports.postCart = (req, res, next) => {
     return req.user.addToCart(product);
   }).then((result)=>{
     console.log(result);
+    res.redirect('/cart');
   })
   .catch((err)=>{
     console.log(err);
   })
-  res.redirect('/cart');
+
 };
 
 exports.postCartDeleteProduct = (req, res, next) => {
@@ -82,12 +83,15 @@ exports.postCartDeleteProduct = (req, res, next) => {
 
 };
 
-// exports.getOrders = (req, res, next) => {
-//   res.render('shop/orders', {
-//     path: '/orders',
-//     pageTitle: 'Your Orders'
-//   });
-// };
+exports.postOrders = (req, res, next) => {
+  req.user.addOrder()
+  .then(result=>{
+    res.redirect('/orders')
+  }).catch(err=>{
+    console.log(err);
+  })
+
+};
 
 // exports.getCheckout = (req, res, next) => {
 //   res.render('shop/checkout', {
