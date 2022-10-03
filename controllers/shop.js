@@ -1,4 +1,5 @@
 const Product = require('../models/product');
+const Order = require('../models/order');
 
 
 
@@ -87,10 +88,26 @@ exports.postCartDeleteProduct = (req, res, next) => {
 };
 
 exports.postOrders = (req, res, next) => {
-  req.user.addOrder()
-  .then(result=>{
-    res.redirect('/orders')
-  }).catch(err=>{
+  req.user
+  .populate('cart.items.productId')
+
+  .then(user=>{
+    const products = user.cart.items.map(i=>{
+      return {product: {...i.productId._doc}, quantity: i.quantity}
+    })
+    const order = new Order({
+      user: {
+        name: req.user.name,
+        userId: req.user._id
+      },
+      products: products
+    })
+    return order.save();
+    })
+     .then(result=>{
+      res.redirect('/orders'); 
+  })
+  .catch(err=>{
     console.log(err);
   })
 
