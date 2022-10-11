@@ -54,18 +54,6 @@ app.use(errorController.get404);
 
 mongoose.connect('mongodb+srv://admin:hq4v1LXQs3u4MGxI@cluster0.qcjc2ek.mongodb.net/shop?retryWrites=true&w=majority')
 .then(result=>{
-  User.findOne().then(user=>{
-    if(!user){
-      const user = new User({
-        name: 'arafat',
-        email: 'arafat@gmail.com',
-        cart: {items: []}
-      });
-      user.save();
-    
-    }
-  })
- 
   app.listen(3000);
 }).catch(err=>{
   console.log(err);
