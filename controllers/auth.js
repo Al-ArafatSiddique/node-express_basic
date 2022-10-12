@@ -100,3 +100,19 @@ exports.postLogout = (req, res, next) => {
     res.redirect('/');
   });
 };
+
+
+exports.getResetPassword = (req, res, next) => {
+  let msg= req.flash('error');
+  if(msg.length > 0){
+    msg= msg[0];
+  }else{
+    msg = null;
+  }
+  console.log(msg);
+  res.render('auth/reset-password', {
+    path: '/reset-password',
+    pageTitle: 'Reset Password',
+    errorMessage: msg
+  });
+};
