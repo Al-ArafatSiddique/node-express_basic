@@ -18,10 +18,17 @@ exports.getLogin = (req, res, next) => {
 };
 
 exports.getSignup = (req, res, next) => {
+  let msg= req.flash('error');
+  if(msg.length > 0){
+    msg= msg[0];
+  }else{
+    msg = null;
+  }
   res.render('auth/signup', {
     path: '/signup',
     pageTitle: 'Signup',
     isAuthenticated: false,
+    errorMessage: msg
   
   });
 };
@@ -32,7 +39,7 @@ exports.postLogin = (req, res, next) => {
   User.findOne({email:email})
     .then(user => {
       if(!user){
-        req.flash('error', 'Invalid email or password');
+        req.flash('error', 'No user found with this email');
         return res.redirect('/login');
       }
       bcrypt.compare(password, user.password)
@@ -46,6 +53,7 @@ exports.postLogin = (req, res, next) => {
           });
          
         }
+        req.flash('error', 'Password is incorrect');
         res.redirect('/login')
       })
       .catch(err=>{
@@ -65,6 +73,7 @@ exports.postSignup = (req, res, next) => {
   User.findOne({email: email})
   .then(userDoc=>{
     if(userDoc){
+      req.flash('error', 'Email is already signed up');
       return res.redirect('/signup');
     }
     return bcrypt
