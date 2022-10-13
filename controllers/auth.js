@@ -1,5 +1,17 @@
 const User = require('../models/user');
 const bcrypt = require('bcryptjs');
+const crypto = require('crypto');
+const nodemailer = require("nodemailer");
+let transporter = nodemailer.createTransport({
+  pool: true,
+  host: "premium84.web-hosting.com",
+  port: 465,
+  secure: true, // true for 465, false for other ports
+  auth: {
+    user: "alarafatsiddique@softpiper.com", // generated ethereal user
+    pass: "Arafat2413", // generated ethereal password
+  },
+});
 
 exports.getLogin = (req, res, next) => {
   let msg= req.flash('error');
@@ -116,3 +128,39 @@ exports.getResetPassword = (req, res, next) => {
     errorMessage: msg
   });
 };
+
+exports.postResetPassword = (req, res, next)=>{
+  crypto.randomBytes(32, (err, buffer)=>{
+    if(err){
+      console.log(err);
+      res.redirect('/');
+    }
+    const token = buffer.toString('hex');
+    User.findOne({email: req.body.email})
+    .then(user=>{
+      if(!user){
+        req.flash('error', 'No account found with this email');
+        return res.redirect('/reset-password');
+      }
+      user.resetToken= token;
+      user.resetTokenExpiration = Date.now()+ 360000;
+      return user.save() 
+    })
+    .then(result=>{
+      res.redirect('/login');
+      transporter.sendMail({
+        to: req.body.email,
+        from: 'alarafatsiddique@softpiper.com',
+        subject: 'Reset Password',
+        html: `<h2>Your have asked for a password reset</h2>
+        <h3>Click the <a href="http://localhost:3000/reset-password/${token}">link</a></h3>
+          
+        `
+      })
+    })
+    .catch(err=>{
+      console.log(err);
+      res.redirect('/reset-password');
+    })
+  })
+}
