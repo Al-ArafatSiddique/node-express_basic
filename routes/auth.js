@@ -8,10 +8,16 @@ router.get('/login', authController.getLogin);
 
 router.get('/signup', authController.getSignup);
 
-router.post('/login', authController.postLogin);
+router.post('/login', 
+[
+    check('email').isEmail().withMessage('Pls enter a valid email address')
+,body('password', 'Pls enter a pass of at least 5 characters and with num and text').isLength({min:5}).isAlphanumeric()
+],
+authController.postLogin);
 
 router.post('/signup', 
-[check('email').isEmail().withMessage('Pls enter a valid email address')
+[
+    check('email').isEmail().withMessage('Pls enter a valid email address')
 ,body('password', 'Pls enter a pass of at least 5 characters and with num and text').isLength({min:5}).isAlphanumeric()
 ,body('confirmPassword').custom((value, {req})=>{
     if(value!==req.body.password){
